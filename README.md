@@ -156,21 +156,34 @@ suman runs:  ansible-playbook playbooks/create-file.yml
 
 ```mermaid
 flowchart TB
-    C["Control Node<br/>AlmaLinux 9.8<br/>User: suman<br/>~/ansible-project"]
-
-    C -->|"SSH + Key<br/>Then sudo to root"| R1
-    C -->|"SSH + Key<br/>Then sudo to root"| R2
-
-    subgraph HA["Ansible Group: ha_servers"]
-        direction LR
-        R1["rnd1<br/>10.10.60.241"]
-        R2["rnd2<br/>10.10.60.242"]
+    subgraph CONTROL["ANSIBLE CONTROL PLANE"]
+        direction TB
+        C["<b>Ansible Control Node</b><br/>AlmaLinux 9.8<br/>User: suman<br/>Working Directory: ~/ansible-project"]
     end
 
-    style C fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a8a
-    style R1 fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
-    style R2 fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
-    style HA fill:#f8fafc,stroke:#64748b,stroke-width:2px,color:#334155
+    subgraph MANAGED["MANAGED NODES"]
+        direction LR
+        R1["<b>rnd1</b><br/>10.10.60.241<br/>AlmaLinux"]
+        R2["<b>rnd2</b><br/>10.10.60.242<br/>AlmaLinux"]
+    end
+
+    C -->|"SSH Key Authentication<br/>Privilege Escalation: sudo → root"| R1
+    C -->|"SSH Key Authentication<br/>Privilege Escalation: sudo → root"| R2
+
+    subgraph INVENTORY["ANSIBLE INVENTORY GROUP"]
+        G["ha_servers<br/>Managed Host Group"]
+    end
+
+    R1 -.-> G
+    R2 -.-> G
+
+    style CONTROL fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a8a
+    style C fill:#eff6ff,stroke:#2563eb,stroke-width:2px,color:#1e3a8a
+    style MANAGED fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
+    style R1 fill:#f0fdf4,stroke:#16a34a,stroke-width:2px,color:#14532d
+    style R2 fill:#f0fdf4,stroke:#16a34a,stroke-width:2px,color:#14532d
+    style INVENTORY fill:#f3e8ff,stroke:#9333ea,stroke-width:2px,color:#581c87
+    style G fill:#faf5ff,stroke:#9333ea,stroke-width:2px,color:#581c87
 ```
 
 ### 2.7 What each tool does
