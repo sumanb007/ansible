@@ -154,7 +154,7 @@ suman runs:  ansible-playbook playbooks/create-file.yml
 7. A summary is printed (or browsed in ansible-navigator)
 ```
 
-```
+```mermaid
 flowchart TB
     C["Control Node<br/>AlmaLinux 9.8<br/>User: suman<br/>~/ansible-project"]
 
