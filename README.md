@@ -132,51 +132,45 @@ We picked the simplest arrangement that is still tidy and repeatable:
 ```
 suman runs:  ansible-playbook playbooks/create-file.yml
              (or: ansible-navigator run playbooks/create-file.yml)
-        |
-        v
+       
 1. ANSIBLE_CONFIG points to ~/ansible-project/ansible.cfg
    It supplies: inventory path, roles path, collections path,
    SSH key, remote user, sudo settings
-        |
-        v
+
 2. The inventory turns the group name into hosts
    ha_servers  ->  rnd1 (10.10.60.241) and rnd2 (10.10.60.242)
-        |
-        v
+
 3. The playbook is read: plays, tasks, and any roles from ansible-roles/
-        |
-        v
+   
 4. Each task's module is found in:
    ~/ansible-project/collections, then /usr/share/ansible/collections,
    then the built-in ansible.builtin
-        |
-        v
+       
 5. Ansible connects over SSH as suman with ~/.ssh/ansible_key
    and uses sudo to become root on each host
-        |
-        v
+
 6. The module runs on the host and returns ok, changed or failed
-        |
-        v
+
 7. A summary is printed (or browsed in ansible-navigator)
 ```
 
 ```
-        +-------------------------------+
-        |  Control node (AlmaLinux 9.8) |
-        |  user: suman                  |
-        |  ~/ansible-project            |
-        +---------------+---------------+
-                        |
-           SSH + key, then sudo to root
-                        |
-          +-------------+-------------+
-          |                           |
-   +------v------+             +------v------+
-   | rnd1        |             | rnd2        |
-   | 10.10.60.241|             | 10.10.60.242|
-   +-------------+             +-------------+
-            group: ha_servers
+flowchart TB
+    C["Control Node<br/>AlmaLinux 9.8<br/>User: suman<br/>~/ansible-project"]
+
+    C -->|"SSH + Key<br/>Then sudo to root"| R1
+    C -->|"SSH + Key<br/>Then sudo to root"| R2
+
+    subgraph HA["Ansible Group: ha_servers"]
+        direction LR
+        R1["rnd1<br/>10.10.60.241"]
+        R2["rnd2<br/>10.10.60.242"]
+    end
+
+    style C fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a8a
+    style R1 fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
+    style R2 fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
+    style HA fill:#f8fafc,stroke:#64748b,stroke-width:2px,color:#334155
 ```
 
 ### 2.7 What each tool does
